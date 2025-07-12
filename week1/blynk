@@ -1,7 +1,7 @@
 #define BLYNK_TEMPLATE_ID    "TMPL6cbQ7_aMD"
 #define BLYNK_TEMPLATE_NAME  "ESP32 PCF8574 LED Controller"
 #define BLYNK_DEVICE_NAME    "MyLEDController"
-#define BLYNK_AUTH_TOKEN     "t9i8-XO5GgQQekNZykuPldqPapdA8DaA"
+#define BLYNK_AUTH_TOKEN     "no"
 
 #include <Arduino.h>
 #include <Wire.h>
