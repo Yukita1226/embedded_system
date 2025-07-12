@@ -26,41 +26,47 @@ int Counter1 = 0;
 int Counter2 = 0;
 
 void loop() {
- if (pcf8574.digitalRead(P6) == LOW)
- {  
-   delay(100);
-    while (pcf8574.digitalRead(P6) == LOW)
-    delay(50);
-    Counter0++;
-    delay(100);
-    Serial.println(Counter0);
-    pcf8574.digitalWrite(P3, Counter0 % 2);
- }
-
- if (pcf8574.digitalRead(P5) == LOW)
- {  
-    delay(100);
-    while (pcf8574.digitalRead(P5) == LOW)
-    delay(50);
-    Counter1++;
-    delay(100);
-    Serial.println(Counter1);
-    pcf8574.digitalWrite(P2, Counter1 % 2);
- }
 
   if (pcf8574.digitalRead(P4) == HIGH)
  {  
-    while (pcf8574.digitalRead(P4) == HIGH)
-    Serial.println("stuck here");
-    delay(150);
-   
- }
- if(pcf8574.digitalRead(P4) == HIGH)
- {
-    Counter2++;
     delay(100);
+
+   if (pcf8574.digitalRead(P5) == LOW)
+   {  
+      delay(100);
+      while (pcf8574.digitalRead(P5) == LOW)
+      delay(50);
+      Counter1++;
+      delay(100);
+      Serial.println(Counter1);
+      pcf8574.digitalWrite(P1, Counter1 % 2);
+   }
+
+
+    if (pcf8574.digitalRead(P6) == LOW)
+   {  
+      delay(100);
+      while (pcf8574.digitalRead(P6) == LOW)
+      delay(50);
+      Counter0++;
+      delay(100);
+      Serial.println(Counter0);
+      pcf8574.digitalWrite(P2, Counter0 % 2);
+   }
+    
+
+    
     Serial.println(Counter2);
     Serial.println(pcf8574.digitalRead(P4));
-    pcf8574.digitalWrite(P1, Counter2 % 2);
+    delay(100);
+    if(pcf8574.digitalRead(P4) == 1)
+    {
+      Counter2++;
+      pcf8574.digitalWrite(P0, Counter2 % 2);
+    }
+    
+    delay(200);
+   
  }
+
 }
