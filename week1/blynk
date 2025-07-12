@@ -1,0 +1,130 @@
+#define BLYNK_TEMPLATE_ID    "TMPL6cbQ7_aMD"
+#define BLYNK_TEMPLATE_NAME  "ESP32 PCF8574 LED Controller"
+#define BLYNK_DEVICE_NAME    "MyLEDController"
+#define BLYNK_AUTH_TOKEN     "t9i8-XO5GgQQekNZykuPldqPapdA8DaA"
+
+#include <Arduino.h>
+#include <Wire.h>
+#include <PCF8574.h>
+#include <WiFi.h>
+#include <BlynkSimpleEsp32.h>
+
+// Wi-Fi credentials
+char ssid[] = "iPad (10)";
+char pass[] = "do i need to tell you never gonna give you up never gonna let you down";
+
+// PCF8574 I²C pins
+#define I2C_ADDR   0x20
+#define SDA_PIN    21
+#define SCL_PIN    22
+TwoWire I2Ctwo = TwoWire(1);
+PCF8574 pcf8574(&I2Ctwo, I2C_ADDR, SDA_PIN, SCL_PIN);
+
+// Counters and LED states
+int Counter0 = 0, Counter1 = 0, Counter2 = 0;
+bool ledStates[4] = {false, false, false, false};  // P0,P1,P2,P3
+
+// Blynk virtual pins
+#define VPIN_0  V1  // P0 (Counter2)
+#define VPIN_1  V2  // P1 (Counter1)
+#define VPIN_2  V3  // P2 (Counter0)
+#define VPIN_3  V4  // P3 (app-only)
+
+// Blynk write handlers: app -> hardware (inverted logic)
+BLYNK_WRITE(VPIN_0) {
+  ledStates[0] = param.asInt();
+  pcf8574.digitalWrite(P0, !ledStates[0]);
+}
+BLYNK_WRITE(VPIN_1) {
+  ledStates[1] = param.asInt();
+  pcf8574.digitalWrite(P1, !ledStates[1]);
+}
+BLYNK_WRITE(VPIN_2) {
+  ledStates[2] = param.asInt();
+  pcf8574.digitalWrite(P2, !ledStates[2]);
+}
+BLYNK_WRITE(VPIN_3) {
+  ledStates[3] = param.asInt();
+  pcf8574.digitalWrite(P3, !ledStates[3]);
+}
+
+void setup() {
+  Serial.begin(115200);
+
+  // Init I2C and expander
+  I2Ctwo.begin(SDA_PIN, SCL_PIN, 100000);
+  
+
+  // Configure outputs P0-P3 and set them OFF (inverted: HIGH = off)
+  for (uint8_t p = 0; p < 4; p++) {
+    pcf8574.pinMode(p, OUTPUT);
+    pcf8574.digitalWrite(p, HIGH);
+  }
+  // Configure inputs P4-P6
+  for (uint8_t p = 4; p <= 6; p++) {
+    pcf8574.pinMode(p, INPUT_PULLUP);
+  }
+
+  // Connect WiFi
+  Serial.print("Connecting to Wi-Fi: "); Serial.println(ssid);
+  WiFi.begin(ssid, pass);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print('.');
+  }
+  Serial.println("\nWi-Fi connected");
+
+  // Connect Blynk
+  Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass, "blynk.cloud", 80);
+
+  // Push initial states to app
+  for (uint8_t i = 0; i < 4; i++) {
+    Blynk.virtualWrite(VPIN_0 + i, ledStates[i]);
+  }
+  pcf8574.begin();
+}
+
+// Checks hardware switches (P4,P5,P6) for P0-P2 and updates LED & Blynk with inverted logic
+void checkHardwareSwitches() {
+  // Only when master switch P4 is HIGH
+  if (pcf8574.digitalRead(P4) != HIGH) return;
+  delay(100);
+
+  // P5 toggles P1 (Counter1)
+  if (pcf8574.digitalRead(P5) == LOW) {
+    delay(100);
+    while (pcf8574.digitalRead(P5) == LOW) delay(50);
+    Counter1++;
+    ledStates[1] = Counter1 % 2;
+    pcf8574.digitalWrite(P1, !ledStates[1]);
+    Blynk.virtualWrite(VPIN_1, ledStates[1]);
+    Serial.printf("P5 pressed: Counter1=%d -> LED1=%d\n", Counter1, ledStates[1]);
+  }
+
+  // P6 toggles P2 (Counter0)
+  if (pcf8574.digitalRead(P6) == LOW) {
+    delay(100);
+    while (pcf8574.digitalRead(P6) == LOW) delay(50);
+    Counter0++;
+    ledStates[2] = Counter0 % 2;
+    pcf8574.digitalWrite(P2, !ledStates[2]);
+    Blynk.virtualWrite(VPIN_2, ledStates[2]);
+    Serial.printf("P6 pressed: Counter0=%d -> LED2=%d\n", Counter0, ledStates[2]);
+  }
+
+  // P4 itself toggles P0 (Counter2)
+  delay(100);
+  if (pcf8574.digitalRead(P4) == HIGH) {
+    Counter2++;
+    ledStates[0] = Counter2 % 2;
+    pcf8574.digitalWrite(P0, !ledStates[0]);
+    Blynk.virtualWrite(VPIN_0, ledStates[0]);
+    Serial.printf("P4 active: Counter2=%d -> LED0=%d\n", Counter2, ledStates[0]);
+  }
+  delay(200);
+}
+
+void loop() {
+  Blynk.run();
+  checkHardwareSwitches();
+}
