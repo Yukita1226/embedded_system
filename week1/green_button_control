@@ -21,10 +21,12 @@ void setup()
   pcf8574.begin(); 
 } 
 int pin = 0; 
+
 void loop() 
 { 
-  Serial.println(pin); 
-  pcf8574.digitalWrite(pin, LOW);   delay(500); 
-  pcf8574.digitalWrite(pin, HIGH);  delay(500); 
-  pin = pin >= 3 ? 0 : pin += 1; 
+if(pcf8754.digitalread(p4 == 1))
+{
+  pin+=1;
+  while(pcf8754.digitalread(p4 == 1);
+  pcf8754.digitalwrite(p0,pin%2);  
 }
