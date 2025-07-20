@@ -1,1 +1,11 @@
+1.Sign in to the Siemens Industry Online Support portal (you’ll need a free account).
 
+2.Navigate to the Software Downloads section and find the LOGOSoft V8.3 listing.
+
+3.Download the base installer by clicking “Install LOGO7” to grab LOGOV7_Setup.exe 
+
+4.Download the upgrade package by clicking “Update to LOGOSoft V8.3 64-bit” to grab LOGOV8.3_Upgrade.exe 
+
+#(Optional) Verify any provided checksums or digital signatures to make sure the downloads aren’t corrupted.
+
+5.Store both executables in a single folder so you’re all set for the actual install and config steps later on.
