@@ -1,0 +1,27 @@
+1.Prep your PC’s network
+  – Open Windows Network Settings → Change adapter options → right-click your Ethernet interface → Properties → IPv4.
+  – Set a static IP in the same subnet you’ll use on the LOGO! (e.g. PC = 192.168.0.10, Subnet Mask = 255.255.255.0).
+
+2.Read or assign the LOGO!8 IP
+  – In LOGOSoft, switch to Network View and click Get (or Set) LOGO!8 IP. This pulls in or lets you type the IP address for your LOGO! module 
+
+
+3.Add the LOGO! device into your project
+  – Still in Network View, click Add New Device, choose LOGO! 8_3_1, and enter the module’s IP, its serial number (SN), and gateway (if you’ve got one) 
+
+
+4.Download your project to the LOGO!
+  – Go to Tools → Transfer → PC to LOGO8, type in the LOGO! IP address you set earlier, then hit OK to push your program down to the module 
+
+
+5.Switch your LOGO! into Run mode
+  – After the transfer finishes, click the little RUN toggle in Soft Comfort (or right-click the device and pick Run Mode) to let it start executing your logic 
+
+
+6.Physically hook up your PC and LOGO!
+  – Plug an Ethernet cable between your PC’s NIC and the LOGO!’s RJ-45 port (a crossover cable isn’t needed with most modern NICs). Look for the LNK/ACT LEDs to light up.
+
+7.Verify the link
+  – Open a command prompt and run ping <LOGO_IP> (e.g., ping 192.168.0.20). If you see replies, you’re all set!
+
+  
