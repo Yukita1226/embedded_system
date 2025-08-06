@@ -1,0 +1,26 @@
+import requests
+import os
+from requests.auth import HTTPDigestAuth
+from io import BytesIO
+from PIL import Image
+
+ip     = "192.168.2.129" // input your web adress here
+user   = "admin" // input username here but if not change use admin
+passwd = "db99bTy=" // password here
+snap_url = f"http://{ip}/ISAPI/Streaming/channels/101/picture"
+
+
+
+
+resp = requests.get(snap_url,
+                    auth=HTTPDigestAuth(user, passwd),
+                    timeout=5,
+                    verify=False)
+
+
+print("Content-Type:", resp.headers.get("Content-Type"))
+resp.raise_for_status()
+
+img = Image.open(BytesIO(resp.content))
+img.save("webcam_snapshot.jpg")
+print("Saved webcam_snapshot.jpg to",os.getcwd())
