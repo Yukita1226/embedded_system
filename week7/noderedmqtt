@@ -1,0 +1,13 @@
+requirement 
+  -node red (if you still dont have them opencmd and type "npm install nodered")** must have node js
+
+
+1.prepare (optional if you dont have modbus package)
+  -install library node-red-contrib-modbus (for modebuspoll)
+
+-- guide--
+
+2.setup nodered modbus on previous example
+3.input this data on mqtt "tcp//broker:mqtt/cool:1883"
+4.setup mqtt part on node red from sever format
+
