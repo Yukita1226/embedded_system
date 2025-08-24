@@ -1,0 +1,15 @@
+tool here https://drive.google.com/drive/u/0/folders/1QWHc_SdDJkWizeSAYLh20vbYvC8X5YHJ
+
+software requirement:
+  -raspberry pi imager from imager_1.9.4.exe
+  -rpiboot fromrpi_boot_setup.exe
+
+
+1.remove pi case carefully locate the boot switch and turn it on (look at ex1a for ref or copy this path : https://github.com/Yukita1226/embedded_system/new/main/week7/setup/ex1a)
+
+2.connect it wuth usb now open raspberry pie now follow the image and press upload (look at ex2a for ref or copy this path : https://github.com/Yukita1226/embedded_system/new/main/week7/setup/ex2a)
+
+3.after upload done unconncet it and put case on it and then wire it follow the image (look at ex3a for ref or copy this path : https://github.com/Yukita1226/embedded_system/new/main/week7/setup/ex3a)
+
+4.now your pi is ready to go to test it look at side at pi there some screen if it on that mean it suscess also can try to open http:board url it bring you to board control page
+(look at ex4a for ref or copy this path : https://github.com/Yukita1226/embedded_system/new/main/week7/setup/ex4a)
