@@ -1,0 +1,123 @@
+1. Install Python
+
+Download from python.org
+ and install.
+
+Tick “Add Python to PATH” during installation (Windows).
+
+Check version:
+
+python --version
+
+
+2. Install VS Code
+
+Download VS Code
+.
+
+Open VS Code → Extensions (Ctrl+Shift+X) → search Python → install “Python” extension by Microsoft.
+
+3. Create a project folder
+
+Open a terminal (or use VS Code’s built-in terminal):
+
+mkdir myproject
+cd myproject
+
+
+4. Make a virtual environment (optional but best practice)
+
+Windows (PowerShell):
+
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+
+
+macOS/Linux:
+
+python3 -m venv .venv
+source .venv/bin/activate
+
+
+5. Install needed packages
+
+pip install requests pillow
+
+
+6. Create a Python file
+
+In VS Code: File → New File → save as app.py.
+
+7. Add code
+
+import requests
+from io import BytesIO
+from PIL import Image
+
+url = "https://picsum.photos/300"
+resp = requests.get(url)
+resp.raise_for_status()
+
+img = Image.open(BytesIO(resp.content))
+img.save("downloaded.jpg")
+print("✅ Image saved")
+
+
+8. Run it
+
+VS Code terminal:
+
+python app.py
+
+
+Check your folder for downloaded.jpg.
+
+🟩 Case 2: Using Thonny
+
+1. Install Thonny
+
+Download from thonny.org
+.
+
+Thonny comes with its own bundled Python (beginner-friendly).
+
+2. Check interpreter
+
+Open Thonny → Tools → Options → Interpreter.
+
+Make sure it points to your desired Python version (Bundled or System).
+
+3. Install packages inside Thonny
+
+In menu: Tools → Manage Packages…
+
+Search for requests → Install.
+
+Search for pillow → Install.
+
+4. Create your script
+
+File → New → Paste this code:
+
+import requests
+from io import BytesIO
+from PIL import Image
+
+url = "https://picsum.photos/300"
+resp = requests.get(url)
+resp.raise_for_status()
+
+img = Image.open(BytesIO(resp.content))
+img.save("downloaded.jpg")
+print("✅ Image saved")
+
+
+Save as app.py.
+
+5. Run it
+
+Press the green Run button (▶).
+
+Check your working folder (bottom right status bar shows path).
+
+You should see downloaded.jpg.
