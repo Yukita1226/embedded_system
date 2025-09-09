@@ -1,0 +1,47 @@
+1. Install Thonny
+
+Download from thonny.org
+.
+
+Thonny comes with its own bundled Python (beginner-friendly).
+
+2. Check interpreter
+
+Open Thonny → Tools → Options → Interpreter.
+
+Make sure it points to your desired Python version (Bundled or System).
+
+3. Install packages inside Thonny
+
+In menu: Tools → Manage Packages…
+
+Search for requests → Install.
+
+Search for pillow → Install.
+
+4. Create your script
+
+File → New → Paste this code:
+
+import requests
+from io import BytesIO
+from PIL import Image
+
+url = "https://picsum.photos/300"
+resp = requests.get(url)
+resp.raise_for_status()
+
+img = Image.open(BytesIO(resp.content))
+img.save("downloaded.jpg")
+print("✅ Image saved")
+
+
+Save as app.py.
+
+5. Run it
+
+Press the green Run button (▶).
+
+Check your working folder (bottom right status bar shows path).
+
+You should see downloaded.jpg.
