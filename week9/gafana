@@ -1,1 +1,66 @@
+🔹 1. Download Grafana
 
+  Go to the official Grafana download page: https://grafana.com/grafana/download
+  
+  Pick your OS:
+  
+  Windows → .msi installer
+  
+  Linux → .deb (Debian/Ubuntu) or .rpm (RHEL/CentOS)
+  
+  Mac → .dmg or use Homebrew
+
+🔹 2. Install Grafana
+
+  Windows:
+  Just run the .msi installer → it will set up Grafana as a service.
+  
+  Linux (Debian/Ubuntu):
+  
+  sudo dpkg -i grafana-enterprise_<version>_amd64.deb
+  sudo systemctl start grafana-server
+  sudo systemctl enable grafana-server
+  
+  
+  Linux (RHEL/CentOS):
+  
+  sudo rpm -i grafana-enterprise-<version>.rpm
+  sudo systemctl start grafana-server
+  sudo systemctl enable grafana-server
+  
+  
+  Mac (Homebrew):
+  
+  brew install grafana
+  brew services start grafana
+  
+  🔹 3. Access Grafana
+
+  Open your browser and go to:
+  👉 http://localhost:3000
+  
+  Default login:
+  
+  User: admin
+  
+  Password: admin (you’ll be asked to change it on first login)
+  
+  🔹 4. Add a Data Source
+  
+  Once inside Grafana:
+  
+  Go to Connections → Data sources
+  
+  Choose one (e.g., Prometheus, MySQL, Postgres, etc.)
+  
+  Configure and test the connection
+
+🔹 5. Create a Dashboard
+
+  Click + → Dashboard → Add visualization
+  
+  Pick your data source
+  
+  Write a query → visualize it (Graph, Table, Gauge, etc.)
+  
+  Save the dashboard
