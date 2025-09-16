@@ -1,1 +1,82 @@
+1. Download
 
+go to: https://docs.influxdata.com/influxdb/latest/install/
+
+pick your OS:
+
+🟢 Ubuntu/Debian
+# add repo
+wget -q https://repos.influxdata.com/influxdata-archive.key -O - | sudo apt-key add -
+source /etc/os-release
+echo "deb https://repos.influxdata.com/debian $VERSION_CODENAME stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
+
+# install
+sudo apt-get update && sudo apt-get install influxdb2
+
+# start service
+sudo systemctl enable influxdb
+sudo systemctl start influxdb
+
+🟢 CentOS / RHEL
+# add repo
+cat <<EOF | sudo tee /etc/yum.repos.d/influxdb.repo
+[influxdb]
+name = InfluxDB Repository - RHEL \$releasever
+baseurl = https://repos.influxdata.com/rhel/\$releasever/\$basearch/stable
+enabled = 1
+gpgcheck = 1
+gpgkey = https://repos.influxdata.com/influxdata-archive.key
+EOF
+
+# install
+sudo yum install influxdb2
+
+# start
+sudo systemctl enable influxdb
+sudo systemctl start influxdb
+
+🟢 Windows
+
+download .zip from influxdata downloads
+
+unzip → put somewhere like C:\influxdb
+
+run from cmd:
+
+influxd
+
+
+(it starts the server on http://localhost:8086)
+
+🟢 macOS (Homebrew)
+brew update
+brew install influxdb
+brew services start influxdb
+
+2. First Setup
+
+once it’s running → open browser:
+
+👉 http://localhost:8086
+
+you’ll see the setup page:
+
+create username & password
+
+define org
+
+define bucket
+
+copy your API token (needed for ESP code)
+
+3. Check it’s working
+influx ping --host http://localhost:8086
+
+
+should return pong.
+
+4. Next Steps
+
+connect ESP to this Influx using server’s LAN IP (not localhost)
+
+add Grafana as a frontend (Grafana + InfluxDB makes nice dashboards)
