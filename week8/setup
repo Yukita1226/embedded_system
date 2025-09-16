@@ -1,0 +1,79 @@
+Your ESP32 sketch uses these headers:
+
+#include <WiFi.h>
+#include <ESPAsyncWebServer.h>
+
+
+👉 Required libraries:
+
+ESPAsyncWebServer
+
+Install from Arduino IDE → Library Manager → search ESPAsyncWebServer → install.
+
+GitHub: https://github.com/me-no-dev/ESPAsyncWebServer
+
+AsyncTCP (dependency for ESPAsyncWebServer)
+
+Install from Arduino IDE → Library Manager → search AsyncTCP → install.
+
+GitHub: https://github.com/me-no-dev/AsyncTCP
+
+📌 steps:
+
+Open Arduino IDE → Tools > Board > ESP32 → pick your board (e.g. ESP32 Dev Module).
+
+Sketch > Include Library > Manage Libraries…
+
+Search and install:
+
+ESP Async WebServer
+
+AsyncTCP
+
+That’s it, your ESP32 code will compile.
+
+🔹 For Python (PC side)
+
+Your Python script imports:
+
+import cv2
+import mediapipe as mp
+import requests
+
+
+👉 Required packages:
+
+OpenCV
+
+pip install opencv-python
+
+
+MediaPipe
+
+pip install mediapipe
+
+
+Requests
+
+pip install requests
+
+
+📌 optional: if pip complains, try python -m pip install ... depending on your environment.
+
+🔹 Quick test
+
+Upload the ESP32 sketch → check Serial Monitor → note down the IP address.
+
+Update this line in Python script:
+
+ESP32_IP = "http://<your-esp32-ip>"
+
+
+Run Python:
+
+python your_script.py
+
+
+Move your hand in front of the camera → it will send /led/<finger>/on|off requests to ESP32.
+
+ESP32 Serial Monitor will log requests and LED pins change.
