@@ -1,0 +1,148 @@
+/*
+  ESP to InfluxDB v2 random data example
+  Works on ESP32 and ESP8266 (Arduino core)
+
+  It sends a random temperature/humidity point every 5s using Influx Line Protocol:
+    measurement,tagKey=tagVal fieldKey=fieldVal timestamp
+
+  Replace the WIFI_*, INFLUX_* placeholders.
+*/
+
+#if defined(ESP32)
+  #include <WiFi.h>
+#elif defined(ESP8266)
+  #include <ESP8266WiFi.h>
+#else
+  #error "This sketch is for ESP32/ESP8266"
+#endif
+
+// ---------- WiFi ----------
+const char* WIFI_SSID     = "YOUR_WIFI_SSID";
+const char* WIFI_PASSWORD = "YOUR_WIFI_PASSWORD";
+
+// ---------- InfluxDB v2 ----------
+const char* INFLUX_HOST = "http://192.168.1.10:8086"; // your InfluxDB base URL (no trailing slash)
+const char* INFLUX_ORG  = "your-org";                 // org name (or ID)
+const char* INFLUX_BUCKET = "your-bucket";            // bucket name
+const char* INFLUX_TOKEN  = "your-long-api-token";    // token with write access
+
+// Optional: tags
+const char* DEVICE_NAME = "esp-dev01";
+const char* LOCATION_TAG = "lab";
+
+// How often to send (ms)
+const unsigned long SEND_INTERVAL_MS = 5000;
+
+WiFiClient client;
+
+String buildLineProtocol() {
+  // Fake random-ish readings
+  float tempC = 20.0 + (float)(random(0, 1000)) / 100.0;  // 20.00 .. 29.99
+  float hum   = 40.0 + (float)(random(0, 3000)) / 100.0;  // 40.00 .. 69.99
+
+  // measurement name: "env"
+  // tags: device,location
+  // fields: temperature,humidity
+  // no explicit timestamp -> Influx will assign server time
+  String lp = "env,device=" + String(DEVICE_NAME) + ",location=" + String(LOCATION_TAG);
+  lp += " temperature=" + String(tempC, 2) + ",humidity=" + String(hum, 2);
+  return lp;
+}
+
+bool writeToInflux(const String& line) {
+  // Build write endpoint: /api/v2/write?org=...&bucket=...&precision=s
+  String url = String("/api/v2/write?org=") + INFLUX_ORG + "&bucket=" + INFLUX_BUCKET + "&precision=s";
+
+  // Extract host + port from INFLUX_HOST (assumes http on :8086 or standard http)
+  String host;
+  int port = 80;
+  String base = INFLUX_HOST;
+
+  if (base.startsWith("http://")) base.remove(0, 7);
+  else if (base.startsWith("https://")) {
+    // This example uses plain HTTP. For HTTPS you’d need WiFiClientSecure + certs.
+    // If you use InfluxDB Cloud, switch to HTTPS and add root CA.
+    base.remove(0, 8);
+  }
+
+  int colonIndex = base.indexOf(':');
+  int slashIndex = base.indexOf('/');
+  if (colonIndex >= 0) {
+    host = base.substring(0, colonIndex);
+    port = base.substring(colonIndex + 1, slashIndex >= 0 ? slashIndex : base.length()).toInt();
+  } else {
+    host = (slashIndex >= 0) ? base.substring(0, slashIndex) : base;
+    port = 8086; // default for InfluxDB
+  }
+
+  // Connect
+  if (!client.connect(host.c_str(), port)) {
+    Serial.println("[Influx] Connection failed");
+    return false;
+  }
+
+  // Build HTTP request
+  String req;
+  req  = "POST " + url + " HTTP/1.1\r\n";
+  req += "Host: " + host + "\r\n";
+  req += "Authorization: Token " + String(INFLUX_TOKEN) + "\r\n";
+  req += "Content-Type: text/plain; charset=utf-8\r\n";
+  req += "Accept: application/json\r\n";
+  req += "Connection: close\r\n";
+  req += "Content-Length: " + String(line.length()) + "\r\n\r\n";
+  req += line;
+
+  // Send
+  client.print(req);
+
+  // Read minimal response
+  unsigned long start = millis();
+  while (client.connected() && !client.available() && (millis() - start) < 2000) {
+    delay(10);
+  }
+
+  // Very lightweight parse: look for " 204 " success code
+  bool success = false;
+  while (client.available()) {
+    String s = client.readStringUntil('\n');
+    // InfluxDB returns 204 No Content on success
+    if (s.startsWith("HTTP/1.1 204") || s.startsWith("HTTP/1.0 204")) {
+      success = true;
+    }
+    // Optional: print body on error
+    // Serial.println(s);
+  }
+  client.stop();
+
+  return success;
+}
+
+void setup() {
+  Serial.begin(115200);
+  delay(1000);
+
+  Serial.println();
+  Serial.println("Connecting WiFi...");
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print('.');
+  }
+  Serial.println();
+  Serial.print("WiFi connected, IP: ");
+  Serial.println(WiFi.localIP());
+
+  randomSeed(esp_random()); // for ESP32; for ESP8266 use analogRead(A0) if needed
+}
+
+void loop() {
+  String lp = buildLineProtocol();
+  Serial.print("Writing: ");
+  Serial.println(lp);
+
+  bool ok = writeToInflux(lp);
+  Serial.println(ok ? "[Influx] write OK" : "[Influx] write FAILED");
+
+  delay(SEND_INTERVAL_MS);
+}
